@@ -30,7 +30,7 @@ function read(req, res) {
 }
 async function run(res, body, query, path, method, headers) {
   headers.host = url_dest;
-  console.log(body, query, path, method, headers);
+  //console.log(body, query, path, method, headers);
   console.log(url_dest + path);
   let _res = "";
   if (body != "") {
@@ -49,6 +49,7 @@ async function run(res, body, query, path, method, headers) {
       redirect: "manual",
     });
   }
+  res.statusCode = _res.status;
   let content = _res.headers.get("content-type");
   let location = _res.headers.get("location");
   let cookie = _res.headers.raw()["set-cookie"];
@@ -58,7 +59,6 @@ async function run(res, body, query, path, method, headers) {
     }
   }
   if (location != null) {
-    console.log("location", location);
     res.setHeader("Location", location.replace(url_dest, url_new));
     res.statusCode = 302;
   }
