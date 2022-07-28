@@ -25,13 +25,17 @@ function read(req, res) {
         query[name].push(val);
       }
     });
-    run(res, body, query, req.url, req.method, req.headers);
+    run(res, body, query, req.url, req.method, req.headers, url.pathname);
   });
 }
-async function run(res, body, query, path, method, headers) {
+async function run(res, body, query, path, method, headers, path_solo) {
   headers.host = url_dest;
   //console.log(body, query, path, method, headers);
   console.log(url_dest + path);
+  if (path_solo == "/sso.html") {
+    res.end("hi");
+    return;
+  }
   let _res = "";
   if (body != "") {
     _res = await fetch("https://" + url_dest + path, {
